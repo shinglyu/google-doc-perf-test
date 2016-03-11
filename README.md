@@ -5,12 +5,21 @@ A Framework for testing Google Doc performance on Firefox
 # Installation
 * Install Firefox
 * Install Selenium for Python
+* Install video recording codes and libs
+* Install video recording main program
 
 ```
 virtualenv venv
 source venv/bin/activate
 
 pip install selenium
+sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data
+
+wget http://www.davidrevoy.com/data/documents/recordscreen_12-04.zip
+unzip recordscreen_12-04.zip
+rm recordscreen_12-04.zip
+chmod +x recordscreen.py
+
 ```
 
 # Setup 
