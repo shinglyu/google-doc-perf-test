@@ -13,7 +13,12 @@ virtualenv venv
 source venv/bin/activate
 
 pip install selenium
+For Ubuntu:
 sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data
+
+For Mac OS:
+brew install ffmpeg
+brew install libav
 
 wget http://www.davidrevoy.com/data/documents/recordscreen_12-04.zip
 unzip recordscreen_12-04.zip
