@@ -20,6 +20,7 @@ unzip recordscreen_12-04.zip
 rm recordscreen_12-04.zip
 chmod +x recordscreen.py
 
+wget https://github.com/bgirard/Gecko-Profiler-Addon/blob/master/geckoprofiler-signed.xpi?raw=true
 ```
 
 # Setup 
@@ -31,3 +32,7 @@ chmod +x recordscreen.py
 ```
 python testperf.py
 ```
+
+This will generate two files:
+* `cleopetra-profile.bin`: the Gecko profile recording, can be viewed on https://cleopatra.io/
+* `tmp.mkv`: the video recording
