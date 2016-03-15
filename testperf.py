@@ -24,20 +24,24 @@ class GoogleDocPerfTest(unittest.TestCase):
 
         # Recording start marker
         self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
-
-        el = self.driver.find_elements_by_xpath("/body")
         element = self.driver.find_element_by_id("docs-table-menu")
-        ActionChains(self.driver).move_to_element(element).click().perform()
-        ActionChains(self.driver).move_to_element(element).move_by_offset(0,35).move_by_offset(100,0).move_by_offset(10,10).perform()
-        time.sleep(2)
-        grid = self.driver.find_element_by_xpath('//div[@class="goog-dimension-picker"]')
-        ActionChains(self.driver).drag_and_drop_by_offset(grid, 50, 50).perform()
-        #grid.click()
-        #el.send_keys(Keys.COMMAND + 'a' + 'v')
+  
+        for i in range(1):
+        	ActionChains(self.driver).move_to_element(element).click().perform()
+        	ActionChains(self.driver).move_to_element(element).move_by_offset(0,35).perform()
+        	time.sleep(3)
+        	grid = self.driver.find_element_by_xpath('//div[@class="goog-dimension-picker"]')
+        	#ActionChains(self.driver).drag_and_drop_by_offset(grid, 50, 50).perform()
+        	#ActionChains(self.driver).move_to_element(grid).click_and_hold(on_element=None).move_by_offset(80, 80).release(on_element=None).perform()
+        	ActionChains(self.driver).move_to_element(grid).move_by_offset(200,200).perform()
+        	grid.click()
+        
+        
+        time.sleep(3)
+        
         timings = self.driver.execute_script("return window.performance.timing")
         self.proc.send_signal(3)
         print(json.dumps(timings, indent=2))
-        time.sleep(3)
         #assert(True)
 
     def tearDown(self):
