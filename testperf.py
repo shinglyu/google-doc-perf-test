@@ -6,6 +6,7 @@ from recordscreen import video_capture_line
 from selenium.webdriver.common.keys import Keys
 import time
 import io
+import os
 
 
 class GoogleDocPerfTest(unittest.TestCase):
@@ -27,19 +28,21 @@ class GoogleDocPerfTest(unittest.TestCase):
         # TODO: Name the video with timestamp
         # TODO: Dynamically assign the screen resolution?
         # TODO: Extract the framerate as a variable?
-        self.proc = subprocess.Popen(video_capture_line(60, 0, 0, 1600, 900, ":0.0", "h264_fast", "./tmp.mkv"))
+        if os.path.exists("./tmp.mkv"):
+            os.remove("./tmp.mkv")
+        self.proc = subprocess.Popen(video_capture_line(90, 72, 125, 1280, 720, ":0.0", "h264", "./tmp.mkv"))
 
         # The profiler starts automatically
         self.driver = webdriver.Firefox(firefox_profile=fp)
         self.driver.set_window_position(0, 0)
-        self.driver.set_window_size(1600, 900)
+        self.driver.set_window_size(1280, 820)
         self.driver.get(self.docUrl)
 
     def test_load(self):
 
         # Recording start marker
         self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
-        time.sleep(1)
+        time.sleep(2)
         timings = self.driver.execute_script("return window.performance.timing")
 
         # TODO: Save the performance.timing output as a file
