@@ -16,37 +16,43 @@ class VideoAnalyzer(object):
     def __init__(self):
         self.image_list = []
 
-    def dump_image_list_to_json(self):
-        output_fp = os.path.join(DEFAULT_IMG_DIR_PATH, DEFAULT_IMG_LIST_DATA_FN)
+    def dump_image_list_to_json(self, output_dp):
+        output_fp = os.path.join(output_dp, DEFAULT_IMG_LIST_DATA_FN)
         with open(output_fp, "wb") as fh:
             json.dump(self.image_list, fh)
 
-    def convert_video_to_images(self, input_video_fp):
+    def convert_video_to_images(self, input_video_fp, output_image_dir_path=DEFAULT_IMG_DIR_PATH, output_image_name=None):
         vidcap = cv2.VideoCapture(input_video_fp)
         result, image = vidcap.read()
-        img_cnt = 1
-        if os.path.exists(DEFAULT_IMG_DIR_PATH):
-            shutil.rmtree(DEFAULT_IMG_DIR_PATH)
-        os.mkdir(DEFAULT_IMG_DIR_PATH)
-        while result:
-            str_image_fp = os.path.join(DEFAULT_IMG_DIR_PATH, "image_%d.jpg" % img_cnt)
+        if output_image_name:
+            if os.path.exists(output_image_dir_path) is False:
+                os.mkdir(output_image_dir_path)
+            str_image_fp = os.path.join(output_image_dir_path, output_image_name)
             cv2.imwrite(str_image_fp, image)
-            result, image = vidcap.read()
-            img_cnt += 1
-            self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
-        self.dump_image_list_to_json()
+        else:
+            img_cnt = 1
+            if os.path.exists(output_image_dir_path):
+                shutil.rmtree(output_image_dir_path)
+            os.mkdir(output_image_dir_path)
+            while result:
+                str_image_fp = os.path.join(output_image_dir_path, "image_%d.jpg" % img_cnt)
+                cv2.imwrite(str_image_fp, image)
+                result, image = vidcap.read()
+                img_cnt += 1
+                self.image_list.append({"time_seq": vidcap.get(0), "image_fp": str_image_fp})
+            self.dump_image_list_to_json(output_image_dir_path)
         return self.image_list
 
-    def compare_with_sample_image(self):
+    def compare_with_sample_image(self, input_sample_dp=DEFAULT_SAMPLE_DIR_PATH):
         result_list = []
         print "Comparing sample file start %s" % time.strftime("%c")
-        sample_fn_list = os.listdir(DEFAULT_SAMPLE_DIR_PATH)
+        sample_fn_list = os.listdir(input_sample_dp)
         sample_fn_list.sort()
         sample_fn_list.reverse()
         found_flag = False
         search_index = 0
         for sample_fn in sample_fn_list:
-            sample_fp = os.path.join(DEFAULT_SAMPLE_DIR_PATH, sample_fn)
+            sample_fp = os.path.join(input_sample_dp, sample_fn)
             for img_index in range(len(self.image_list)):
                 if found_flag is False:
                     image_data = self.image_list[img_index]
@@ -62,7 +68,7 @@ class VideoAnalyzer(object):
                         found_flag = True
                         search_index = img_index - 1
                     result_list.append(image_data)
-                    if len(result_list) == len(os.listdir(DEFAULT_SAMPLE_DIR_PATH)):
+                    if len(result_list) == len(os.listdir(input_sample_dp)):
                         return result_list
                     break
         print "Comparing sample file end %s" % time.strftime("%c")
