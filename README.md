@@ -35,7 +35,7 @@ follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-
 # Usage
 
 ```
-python testperf.py
+python -m unittest tests.test_googledoc_sample
 ```
 
 This will generate two files:
