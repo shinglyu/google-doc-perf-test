@@ -16,11 +16,6 @@ source venv/bin/activate
 pip install selenium
 sudo apt-get install wget libav-tools ffmpeg libavc1394-0 libavformat-extra-53 libavfilter2 libavutil-extra-51 mencoder libavahi-common-data
 
-wget http://www.davidrevoy.com/data/documents/recordscreen_12-04.zip
-unzip recordscreen_12-04.zip
-rm recordscreen_12-04.zip
-chmod +x recordscreen.py
-
 wget https://github.com/bgirard/Gecko-Profiler-Addon/blob/master/geckoprofiler-signed.xpi?raw=true
 
 wget https://github.com/Itseez/opencv/archive/3.0.0.zip

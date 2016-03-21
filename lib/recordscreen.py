@@ -26,25 +26,28 @@ By default it captures the entire desktop.
 # THE SOFTWARE.
 ###############################################################################
 
+import sys
+import glob
+import optparse
+import subprocess
+import platform
+import re
+
 # Easy-to-change defaults for users
 DEFAULT_FPS = 15
 DEFAULT_FILE_EXTENSION = ".mkv"
 ACCEPTABLE_FILE_EXTENSIONS = [".avi", ".mp4", ".mov", ".mkv", ".ogv"]
 DEFAULT_CAPTURE_AUDIO_DEVICE = "pulse"
-DEFAULT_CAPTURE_DISPLAY_DEVICE = ":0.0"
 DEFAULT_AUDIO_CODEC = "vorbis"
 DEFAULT_VIDEO_CODEC = "h264_fast"
-
-import os
-import sys
-import os.path
-import glob
-import time
-import random
-import tempfile
-import optparse
-import subprocess
-import re
+if platform.release().lower() == "darwin":
+    DEFAULT_CAPTURE_DISPLAY_DEVICE = "1"
+    DEFAULT_RECORDING_CMD = "ffmpeg"
+    DEFAULT_FORCE_FORMAT = "avfoundation"
+else:
+    DEFAULT_CAPTURE_DISPLAY_DEVICE = ":0.0"
+    DEFAULT_RECORDING_CMD = "avconv"
+    DEFAULT_FORCE_FORMAT = "x11grab"
 
 
 PYTHON_3 = (sys.version_info[0] == 3)
@@ -92,11 +95,11 @@ def capture_line(fps, x, y, height, width, display_device, audio_device, video_c
     if have_multiproc:
         # Detect the number of threads we have available
         threads = multiprocessing.cpu_count()
-    line = ["avconv",
+    line = [DEFAULT_RECORDING_CMD,
             "-f", "alsa",
             "-ac", "2",
             "-i", str(audio_device),
-            "-f", "x11grab",
+            "-f", DEFAULT_FORCE_FORMAT,
             "-r", str(fps),
             "-s", "%dx%d" % (int(height), int(width)),
             "-i", display_device + "+" + str(x) + "," + str(y)]
@@ -114,8 +117,8 @@ def screenshot_capture_line(fps, x, y, height, width, display_device, video_code
         # Detect the number of threads we have available
         threads = multiprocessing.cpu_count()
 
-    line = ["avconv",
-            "-f", "x11grab",
+    line = [DEFAULT_RECORDING_CMD,
+            "-f", DEFAULT_FORCE_FORMAT,
             "-r", str(fps),
             "-s", "%dx%d" % (int(height), int(width)),
             "-i", display_device + "+" + str(x) + "," + str(y),
@@ -133,8 +136,8 @@ def video_capture_line(fps, x, y, height, width, display_device, video_codec, ou
         # Detect the number of threads we have available
         threads = multiprocessing.cpu_count()
 
-    line = ["avconv",
-            "-f", "x11grab",
+    line = [DEFAULT_RECORDING_CMD,
+            "-f", DEFAULT_FORCE_FORMAT,
             "-r", str(fps),
             "-s", "%dx%d" % (int(height), int(width)),
             "-i", display_device + "+" + str(x) + "," + str(y)]
@@ -147,7 +150,7 @@ def audio_capture_line(audio_device, audio_codec, output_path):
     """ Returns the command line to capture audio (no video), in a list form
         compatible with Popen.
     """
-    line = ["avconv",
+    line = [DEFAULT_RECORDING_CMD,
             "-f", "alsa",
             "-ac", "2",
             "-i", str(audio_device)]
