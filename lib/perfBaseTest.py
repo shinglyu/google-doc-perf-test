@@ -13,6 +13,7 @@ DEFAULT_THIRDPARTY_DIR = os.path.join(os.getcwd(), "thirdParty")
 DEFAULT_OUTPUT_DIR = os.path.join(os.getcwd(), "output")
 DEFAULT_VIDEO_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "videos")
 DEFAULT_PROFILE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "profiles")
+DEFAULT_IMAGE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images")
 DEFAULT_IMAGE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "output")
 DEFAULT_IMAGE_SAMPLE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "sample")
 
@@ -33,7 +34,7 @@ class PerfBaseTest(unittest.TestCase):
 
     def initOutputDir(self):
         # Init output folder
-        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR,
+        for chk_dir in [DEFAULT_OUTPUT_DIR, DEFAULT_VIDEO_OUTPUT_DIR, DEFAULT_PROFILE_OUTPUT_DIR, DEFAULT_IMAGE_DIR,
                         DEFAULT_IMAGE_OUTPUT_DIR, DEFAULT_IMAGE_SAMPLE_DIR]:
             if os.path.exists(chk_dir) is False:
                 os.mkdir(chk_dir)
@@ -50,10 +51,6 @@ class PerfBaseTest(unittest.TestCase):
         self.img_output_sample_2_fn = self.output_name + "_sample_2.jpg"
         self.profile_timing_json_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
-
-    def dumpToJson(self, output_data, output_fp, mode="wb"):
-        with open(output_fp, mode) as fh:
-            json.dump(output_data, fh, indent=2)
 
     def setUp(self):
         # Init output folder
@@ -105,6 +102,51 @@ class PerfBaseTest(unittest.TestCase):
 
         # analyze the video with sample image
         video_analyze_obj = VideoAnalyzeObj()
-        self.dumpToJson(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp), DEFAULT_TEST_RESULT, "a")
+        self.outputResult(video_analyze_obj.run_analyze(self.video_output_fp, self.img_output_dp, self.img_sample_dp))
+
+    def dumpToJson(self, output_data, output_fp, mode="wb"):
+        with open(output_fp, mode) as fh:
+            json.dump(output_data, fh, indent=2)
+
+    def outputResult(self, current_run_result):
+        #result = {'class_name': {'total_run_no': 0, 'error_no': 0, 'total_time': 0, 'avg_time': 0, 'max_time': 0, 'min_time': 0, 'detail': []}}
+        run_time = 0
+        if os.path.exists(DEFAULT_TEST_RESULT):
+            with open(DEFAULT_TEST_RESULT) as fh:
+                result = json.load(fh)
+        else:
+            result = {}
+
+        if len(current_run_result) == 2:
+            run_time = current_run_result[0]['time_seq'] - current_run_result[1]['time_seq']
+
+        if self._testMethodName in result:
+            result[self._testMethodName]['total_run_no'] += 1
+            result[self._testMethodName]['total_time'] += run_time
+            if run_time == 0:
+                result[self._testMethodName]['error_no'] += 1
+            result[self._testMethodName]['avg_time'] = result[self._testMethodName]['total_time'] / result[self._testMethodName]['total_run_no']
+            if run_time > result[self._testMethodName]['max_time']:
+                result[self._testMethodName]['max_time'] = run_time
+            if run_time < result[self._testMethodName]['min_time']:
+                result[self._testMethodName]['min_time'] = run_time
+            result[self._testMethodName]['detail'].extend(current_run_result)
+        else:
+            result[self._testMethodName] = {}
+            result[self._testMethodName]['total_run_no'] = 1
+            result[self._testMethodName]['total_time'] = run_time
+            if run_time == 0:
+                result[self._testMethodName]['error_no'] = 1
+            else:
+                result[self._testMethodName]['error_no'] = 0
+            result[self._testMethodName]['avg_time'] = run_time
+            result[self._testMethodName]['max_time'] = run_time
+            result[self._testMethodName]['min_time'] = run_time
+            result[self._testMethodName]['detail'] = current_run_result
+
+        self.dumpToJson(result, DEFAULT_TEST_RESULT)
+
+
+
 
 
