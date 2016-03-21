@@ -40,7 +40,7 @@ ACCEPTABLE_FILE_EXTENSIONS = [".avi", ".mp4", ".mov", ".mkv", ".ogv"]
 DEFAULT_CAPTURE_AUDIO_DEVICE = "pulse"
 DEFAULT_AUDIO_CODEC = "vorbis"
 DEFAULT_VIDEO_CODEC = "h264_fast"
-if platform.release().lower() == "darwin":
+if platform.system().lower() == "darwin":
     DEFAULT_CAPTURE_DISPLAY_DEVICE = "1"
     DEFAULT_RECORDING_CMD = "ffmpeg"
     DEFAULT_FORCE_FORMAT = "avfoundation"

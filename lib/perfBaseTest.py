@@ -41,7 +41,7 @@ class PerfBaseTest(unittest.TestCase):
 
     def initOutputFn(self):
         # Init output file name
-        self.output_name = self.__class__.__name__ + "_" + str(int(time.time()))
+        self.output_name = self._testMethodName + "_" + str(int(time.time()))
         self.video_output_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + ".mkv")
         self.video_output_sample_1_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_1.mkv")
         self.video_output_sample_2_fp = os.path.join(DEFAULT_VIDEO_OUTPUT_DIR, self.output_name + "_sample_2.mkv")
@@ -125,7 +125,7 @@ class PerfBaseTest(unittest.TestCase):
             result[self._testMethodName]['total_time'] += run_time
             if run_time == 0:
                 result[self._testMethodName]['error_no'] += 1
-            result[self._testMethodName]['avg_time'] = result[self._testMethodName]['total_time'] / result[self._testMethodName]['total_run_no']
+            result[self._testMethodName]['avg_time'] = result[self._testMethodName]['total_time'] / (result[self._testMethodName]['total_run_no'] - result[self._testMethodName]['error_no'])
             if run_time > result[self._testMethodName]['max_time']:
                 result[self._testMethodName]['max_time'] = run_time
             if run_time < result[self._testMethodName]['min_time']:
