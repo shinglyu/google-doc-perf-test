@@ -33,6 +33,10 @@ follow this link[http://www.pyimagesearch.com/2015/06/22/install-opencv-3-0-and-
 python -m unittest tests.test_googledoc_sample
 ```
 
-This will generate two files:
-* `cleopetra-profile.bin`: the Gecko profile recording, can be viewed on https://cleopatra.io/
-* `tmp.mkv`: the video recording
+
+Output folder structure as below:
+* `/output/images/sample/[case_class_name]_[timestamp]`: sample images capture before or after execution steps
+* `/output/images/output/[case_class_name]_[timestamp]`: images converted from desktop recording video 
+* `/output/videos`: video recording during case execution
+* `/output/profiles`: profile recording during case execution
+* * `.bin`: the Geckon profile recording, can be viewed on https://cleopatra.io/
