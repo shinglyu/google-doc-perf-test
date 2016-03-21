@@ -45,9 +45,11 @@ class RecordingVideoObj(object):
 class VideoAnalyzeObj(object):
 
     def run_analyze(self, input_video_fp, output_img_dp, input_sample_dp):
+        if os.path.exists(output_img_dp) is False:
+            os.mkdir(output_img_dp)
         video_analyze_obj = VideoAnalyzer()
         video_analyze_obj.convert_video_to_images(input_video_fp, output_img_dp)
-        print video_analyze_obj.compare_with_sample_image(input_sample_dp)
+        return video_analyze_obj.compare_with_sample_image(input_sample_dp)
 
 
 
