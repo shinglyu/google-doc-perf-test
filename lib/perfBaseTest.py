@@ -80,7 +80,7 @@ class PerfBaseTest(unittest.TestCase):
 
         # Stop video recording
         self.video_recording_obj.stop_video_recording()
-        time.sleep(10) #XXX: Change this to active wait
+        time.sleep(30) #XXX: Change this to active wait
 
         # Switch to the cleopetra.io tab
         main_window = self.driver.current_window_handle
