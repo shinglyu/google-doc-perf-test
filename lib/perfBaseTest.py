@@ -125,7 +125,10 @@ class PerfBaseTest(unittest.TestCase):
             result[self._testMethodName]['total_time'] += run_time
             if run_time == 0:
                 result[self._testMethodName]['error_no'] += 1
-            result[self._testMethodName]['avg_time'] = result[self._testMethodName]['total_time'] / (result[self._testMethodName]['total_run_no'] - result[self._testMethodName]['error_no'])
+            if (result[self._testMethodName]['total_run_no'] - result[self._testMethodName]['error_no']) == 0:
+                result[self._testMethodName]['avg_time'] = 0
+            else:
+                result[self._testMethodName]['avg_time'] = result[self._testMethodName]['total_time'] / (result[self._testMethodName]['total_run_no'] - result[self._testMethodName]['error_no'])
             if run_time > result[self._testMethodName]['max_time']:
                 result[self._testMethodName]['max_time'] = run_time
             if run_time < result[self._testMethodName]['min_time']:
@@ -137,11 +140,14 @@ class PerfBaseTest(unittest.TestCase):
             result[self._testMethodName]['total_time'] = run_time
             if run_time == 0:
                 result[self._testMethodName]['error_no'] = 1
+                result[self._testMethodName]['avg_time'] = 0
+                result[self._testMethodName]['max_time'] = 0
+                result[self._testMethodName]['min_time'] = 0
             else:
                 result[self._testMethodName]['error_no'] = 0
-            result[self._testMethodName]['avg_time'] = run_time
-            result[self._testMethodName]['max_time'] = run_time
-            result[self._testMethodName]['min_time'] = run_time
+                result[self._testMethodName]['avg_time'] = run_time
+                result[self._testMethodName]['max_time'] = run_time
+                result[self._testMethodName]['min_time'] = run_time
             result[self._testMethodName]['detail'] = current_run_result
 
         self.dumpToJson(result, DEFAULT_TEST_RESULT)
