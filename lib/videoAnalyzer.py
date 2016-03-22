@@ -61,7 +61,6 @@ class VideoAnalyzer(object):
                     image_data = self.image_list[new_index]
                     if new_index < 0:
                         break
-                print "Comparing  sample file [%s] with imgae file [%s]" % (sample_fn, image_data['image_fp'])
                 if self.compare_two_images(sample_fp, image_data['image_fp']):
                     print "Comparing sample file end %s" % time.strftime("%c")
                     if found_flag is False:
@@ -94,6 +93,7 @@ class VideoAnalyzer(object):
                     px1 = img1[i, j]
                     px2 = img2[i, j]
                     if abs(px1[0] - px2[0]) > 5 or abs(px1[1] - px2[1]) > 5 or abs(px1[2] - px2[2]) > 5:
+                        print "Comparing  sample file [%s] with imgae file [%s] mismatch! value [%s] vs [%s]" % (image1_fp, image2_fp, px1, px2)
                         mismatch += 1
                         return match
             if mismatch == 0:
