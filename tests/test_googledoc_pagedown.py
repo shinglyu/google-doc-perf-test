@@ -13,12 +13,12 @@ class TestGoogleDocSample(PerfBaseTest):
         self.video_recording_obj.capture_screen(self.video_output_sample_1_fp, self.img_sample_dp, self.img_output_sample_1_fn)
 
     def test_firefox_load(self):
-        test_pagedown()
+        pagedown()
 
     def test_chrome_load(self):
-        test_pagedown()
+        pagedown()
 
-    def test_pagedown(self):
+    def pagedown(self):
         # Recording start marker
         self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
         time.sleep(5)
