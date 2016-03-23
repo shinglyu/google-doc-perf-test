@@ -18,6 +18,7 @@ DEFAULT_IMAGE_OUTPUT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "output")
 DEFAULT_IMAGE_SAMPLE_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "images", "sample")
 
 DEFAULT_GECKO_PROFILER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "geckoprofiler-signed.xpi")
+DEFAULT_CHROME_DRIVER_PATH = os.path.join(DEFAULT_THIRDPARTY_DIR, "chromedriver")
 
 DEFAULT_TEST_RESULT = os.path.join(os.getcwd(), "result.json")
 
@@ -25,6 +26,9 @@ DEFAULT_BROWSER_POS_X = 0
 DEFAULT_BROWSER_POS_Y = 0
 DEFAULT_BROWSER_WIDTH = 1200
 DEFAULT_BROWSER_HEIGHT = 980
+
+DEFAULT_BROWSER_TYPE_FIREFOX = "firefox"
+DEFAULT_BROWSER_TYPE_CHROME = "chrome"
 
 
 class PerfBaseTest(unittest.TestCase):
@@ -52,14 +56,24 @@ class PerfBaseTest(unittest.TestCase):
         self.profile_timing_json_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + "_timing.json")
         self.profile_timing_bin_fp = os.path.join(DEFAULT_PROFILE_OUTPUT_DIR, self.output_name + ".bin")
 
+    def initWebDriver(self):
+        self.browser_type = DEFAULT_BROWSER_TYPE_FIREFOX
+        test_name_list = self._testMethodName.split("_")
+        if len(test_name_list) > 2:
+            self.browser_type = test_name_list[1].lower()
+        if self.browser_type == DEFAULT_BROWSER_TYPE_CHROME:
+            self.driver = webdriver.Chrome(DEFAULT_CHROME_DRIVER_PATH)
+        else:
+            # The profiler starts automatically
+            # Install gecko profiler addon
+            # Ref: https://github.com/bgirard/Gecko-Profiler-Addon
+            fp = webdriver.FirefoxProfile()
+            fp.add_extension(extension=DEFAULT_GECKO_PROFILER_PATH)
+            self.driver = webdriver.Firefox(firefox_profile=fp)
+
     def setUp(self):
         # Init output folder
         self.initOutputDir()
-
-        # Install gecko profiler addon
-        # Ref: https://github.com/bgirard/Gecko-Profiler-Addon
-        fp = webdriver.FirefoxProfile()
-        fp.add_extension(extension=DEFAULT_GECKO_PROFILER_PATH)
 
         # Init output file name
         self.initOutputFn()
@@ -69,35 +83,40 @@ class PerfBaseTest(unittest.TestCase):
         self.video_recording_obj = RecordingVideoObj()
         self.video_recording_obj.start_video_recording(self.video_output_fp)
 
-        # The profiler starts automatically
-        self.driver = webdriver.Firefox(firefox_profile=fp)
+        # init webdriver based on your test method name
+        self.initWebDriver()
+
+        # move the browser window to the top left position
         self.driver.set_window_position(DEFAULT_BROWSER_POS_X, DEFAULT_BROWSER_POS_Y)
         self.driver.set_window_size(DEFAULT_BROWSER_WIDTH, DEFAULT_BROWSER_HEIGHT)
 
     def tearDown(self):
-        # Stop gecko profiler recording
-        self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.SHIFT + '2')
-
         # Stop video recording
         self.video_recording_obj.stop_video_recording()
-        time.sleep(10) #XXX: Change this to active wait
 
-        # Switch to the cleopetra.io tab
-        main_window = self.driver.current_window_handle
-        self.driver.switch_to_window(main_window) # Switch to current frame
+        if self.browser_type == DEFAULT_BROWSER_TYPE_FIREFOX:
+            # Stop gecko profiler recording
+            self.driver.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.SHIFT + '2')
 
-        self.driver.set_script_timeout(5)
-        recording = self.driver.execute_async_script(
-            "var done = arguments[0];" +
-            "console.log(done);" +
-            "window.Parser.getSerializedProfile(true, function (serializedProfile) {" +
-            "  done(serializedProfile);"
-            "});"
-        )
+            time.sleep(10) #XXX: Change this to active wait
 
-        # dump profile to .bin file
-        with io.open(self.profile_timing_bin_fp, 'w', encoding='utf-8') as f:
-            f.write(recording)
+            # Switch to the cleopetra.io tab
+            main_window = self.driver.current_window_handle
+            self.driver.switch_to_window(main_window) # Switch to current frame
+
+            self.driver.set_script_timeout(5)
+            recording = self.driver.execute_async_script(
+                "var done = arguments[0];" +
+                "console.log(done);" +
+                "window.Parser.getSerializedProfile(true, function (serializedProfile) {" +
+                "  done(serializedProfile);"
+                "});"
+            )
+
+            # dump profile to .bin file
+            with io.open(self.profile_timing_bin_fp, 'w', encoding='utf-8') as f:
+                f.write(recording)
+
         self.driver.close()
 
         # analyze the video with sample image

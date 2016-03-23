@@ -1,5 +1,6 @@
 __author__ = 'shako'
 import os
+import platform
 import subprocess
 from recordscreen import video_capture_line
 from videoAnalyzer import VideoAnalyzer
@@ -11,8 +12,11 @@ DEFAULT_VIDEO_RECORDING_POS_X = 72
 DEFAULT_VIDEO_RECORDING_POS_Y = 125
 DEFAULT_VIDEO_RECORDING_WIDTH = 1024
 DEFAULT_VIDEO_RECORDING_HEIGHT = 768
-DEFAULT_VIDEO_RECORDING_DISPLAY = ":0.0"
-DEFAULT_VIDEO_RECORDING_CODEC = "h264"
+if platform.system().lower() == "darwin":
+    DEFAULT_VIDEO_RECORDING_DISPLAY = "1"
+else:
+    DEFAULT_VIDEO_RECORDING_DISPLAY = ":0.0+" + str(DEFAULT_VIDEO_RECORDING_POS_X) + "," + str(DEFAULT_VIDEO_RECORDING_POS_X)
+DEFAULT_VIDEO_RECORDING_CODEC = "h264_fast"
 
 class RecordingVideoObj(object):
 

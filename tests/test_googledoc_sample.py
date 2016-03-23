@@ -10,7 +10,15 @@ class TestGoogleDocSample(PerfBaseTest):
         time.sleep(5)
         self.video_recording_obj.capture_screen(self.video_output_sample_1_fp, self.img_sample_dp, self.img_output_sample_1_fn)
 
-    def test_load(self):
+    #def test_firefox_load(self):
+    #    # Recording start marker
+    #    self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
+    #    time.sleep(5)
+    #    timings = self.driver.execute_script("return window.performance.timing")
+    #    self.dumpToJson(timings, self.profile_timing_json_fp)
+    #    assert(True)
+
+    def test_chrome_load(self):
         # Recording start marker
         self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
         time.sleep(5)

@@ -3,6 +3,7 @@ import os
 import cv2
 import json
 import time
+import numpy
 import argparse
 import shutil
 from argparse import ArgumentDefaultsHelpFormatter
@@ -92,7 +93,7 @@ class VideoAnalyzer(object):
                 for j in range(1, cols1):
                     px1 = img1[i, j]
                     px2 = img2[i, j]
-                    if abs(px1[0] - px2[0]) > 5 or abs(px1[1] - px2[1]) > 5 or abs(px1[2] - px2[2]) > 5:
+                    if max(px1[0],px2[0]) - min(px1[0],px2[0]) > 5 or max(px1[1],px2[1]) - min(px1[1],px2[1]) > 5 or max(px1[2],px2[2]) - min(px1[2],px2[2]) > 5:
                         print "Comparing  sample file [%s] with imgae file [%s] mismatch! value [%s] vs [%s]" % (image1_fp, image2_fp, px1, px2)
                         mismatch += 1
                         return match
