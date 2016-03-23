@@ -121,7 +121,7 @@ def screenshot_capture_line(fps, x, y, height, width, display_device, video_code
             "-f", DEFAULT_FORCE_FORMAT,
             "-r", str(fps),
             "-s", "%dx%d" % (int(height), int(width)),
-            "-i", display_device + "+" + str(x) + "," + str(y),
+            "-i", display_device,
             "-frames", "1"]
     line += vcodecs[video_codec]
     line += ["-threads", str(threads), str(output_path)]
@@ -140,7 +140,7 @@ def video_capture_line(fps, x, y, height, width, display_device, video_codec, ou
             "-f", DEFAULT_FORCE_FORMAT,
             "-r", str(fps),
             "-s", "%dx%d" % (int(height), int(width)),
-            "-i", display_device + "+" + str(x) + "," + str(y)]
+            "-i", display_device]
     line += vcodecs[video_codec]
     line += ["-threads", str(threads), str(output_path)]
     return line
