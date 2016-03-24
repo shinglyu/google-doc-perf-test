@@ -13,10 +13,10 @@ class TestGoogleDocSample(PerfBaseTest):
         self.video_recording_obj.capture_screen(self.video_output_sample_1_fp, self.img_sample_dp, self.img_output_sample_1_fn)
 
     def test_firefox_load(self):
-        pagedown()
+        self.pagedown()
 
     def test_chrome_load(self):
-        pagedown()
+        self.pagedown()
 
     def pagedown(self):
         # Recording start marker
@@ -25,7 +25,7 @@ class TestGoogleDocSample(PerfBaseTest):
         page = self.driver.find_element_by_xpath('//div[@class="kix-appview-editor"]')
         for p in range(100):
             page.send_keys(Keys.PAGE_DOWN)
-
+        '''
         ## this is case for creating table
         element = self.driver.find_element_by_id("docs-table-menu")
         for i in range(1):
@@ -37,6 +37,7 @@ class TestGoogleDocSample(PerfBaseTest):
             ##ActionChains(self.driver).move_to_element(grid).click_and_hold(on_element=None).move_by_offset(80, 80).release(on_element=None).perform()
             ActionChains(self.driver).move_to_element(grid).move_by_offset(200,200).perform()
             #grid.click()
+        '''
         time.sleep(5)
         timings = self.driver.execute_script("return window.performance.timing")
         self.dumpToJson(timings, self.profile_timing_json_fp)
