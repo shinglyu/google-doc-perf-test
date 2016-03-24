@@ -12,12 +12,12 @@ class TestGoogleDocSample(PerfBaseTest):
         self.video_recording_obj.capture_screen(self.video_output_sample_1_fp, self.img_sample_dp, self.img_output_sample_1_fn)
 
     def test_firefox_load(self):
-        self.logfile()
+        self.loadfile()
 
     def test_chrome_load(self):
-        self.logfile()
+        self.loadfile()
 
-    def logfile(self):
+    def loadfile(self):
         # Recording start marker
         
         ########## Test case session ########################
