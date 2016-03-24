@@ -9,6 +9,7 @@ class TestGoogleDocSample(PerfBaseTest):
         super(TestGoogleDocSample, self).setUp()
         self.docUrl = "https://docs.google.com/document/d/1V17WzeUGbUTc4oqqS3IvnRLCC9Xs79p6CeDyKo0LBq0/edit"
         self.driver.get(self.docUrl)
+        self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
         time.sleep(5)
         self.video_recording_obj.capture_screen(self.video_output_sample_1_fp, self.img_sample_dp, self.img_output_sample_1_fn)
 
@@ -19,9 +20,6 @@ class TestGoogleDocSample(PerfBaseTest):
         self.pagedown()
 
     def pagedown(self):
-        # Recording start marker
-        self.driver.execute_script("var teststart = function(){document.getElementById('docs-branding-logo').style.backgroundColor = 'red'}; teststart()");
-        time.sleep(5)
         page = self.driver.find_element_by_xpath('//div[@class="kix-appview-editor"]')
         for p in range(100):
             page.send_keys(Keys.PAGE_DOWN)
